@@ -28,8 +28,7 @@ const findById = (id) => {
     return foundUser;
 }
 
-
 module.exports = {
-  dbInstance : dbInstance,
-  findById : findById
+    dbInstance: dbInstance,
+    findById: findById,
 }
