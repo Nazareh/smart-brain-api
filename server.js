@@ -20,7 +20,7 @@ app.post('/signin', (req, res) => {
         ? res.status(401).json(invalidLoginMsg)
         : bcrypt.compare(password, user.password).then((bcryptRes) => {
             !!bcryptRes
-                ? res.status(201).json('success')
+                ? res.status(201).json(user)
                 : res.status(401).json(invalidLoginMsg);
         });
 });
