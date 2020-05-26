@@ -15,6 +15,12 @@ const dbInstance = {
             entries: 0,
             joined: new Date()
         },
+    ],
+    login: [{
+        id: '987',
+        has: '',
+        email: 'john@gmail.com'
+    }
     ]
 }
 
@@ -28,7 +34,18 @@ const findById = (id) => {
     return foundUser;
 }
 
+const findByEmail = (email) => {
+    let foundUser;
+    dbInstance.users.forEach(user => {
+        if (user.email === email.toString()) {
+            foundUser = user;
+        }
+    })
+    return foundUser;
+}
+
 module.exports = {
     dbInstance: dbInstance,
     findById: findById,
+    findByEmail : findByEmail
 }

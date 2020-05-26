@@ -1,34 +1,47 @@
 const express = require('express');
-const {dbInstance, findById} = require('./database.js')
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
+
 const app = express();
+const {dbInstance, findById, findByEmail} = require('./database.js')
+
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send(database.users);
+    res.send(dbInstance.users);
 })
 
 app.post('/signin', (req, res) => {
-    if (req.body.email === dbInstance.users[0].email &&
-        req.body.password === dbInstance.users[0].password) {
-        res.status(201).json('success');
-    } else {
-        res.status(400).json('error login');
-    }
+    const invalidLoginMsg = 'email and password dont match';
+    const {email, password} = req.body;
+    const user = findByEmail(email);
+    !user
+        ? res.status(401).json(invalidLoginMsg)
+        : bcrypt.compare(password, user.password).then((bcryptRes) => {
+            !!bcryptRes
+                ? res.status(201).json('success')
+                : res.status(401).json(invalidLoginMsg);
+        });
 });
 
 app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
-    dbInstance.users.push(
-        {
-            id: '125',
-            name: name,
-            email: email,
-            password: password,
-            entries: 0,
-            joined: new Date()
-        }
-    );
-    res.json(dbInstance.users[dbInstance.users.length - 1])
+    bcrypt.hash(password, 10, function (err, hash) {
+        dbInstance.users.push(
+            {
+                id: '125',
+                name: name,
+                email: email,
+                password: hash,
+                entries: 0,
+                joined: new Date()
+            }
+        );
+        res.json(dbInstance.users[dbInstance.users.length - 1])
+    });
+
+
 })
 
 app.get('/profile/:id', (req, res) => {
