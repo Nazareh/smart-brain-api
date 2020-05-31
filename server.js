@@ -1,6 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const knex = require('knex');
+
+const db = knex({
+    client: 'pg',
+    connection: {
+        host: '127.0.0.1:5432',
+        user: 'postgres',
+        password: 'mysecretpassword',
+        database: 'postgres'
+    }
+});
+
+// db.select('*').from('users');
 
 const app = express();
 const {dbInstance, findById, findByEmail} = require('./database.js')
@@ -51,7 +64,7 @@ app.get('/profile/:id', (req, res) => {
 
 app.put('/image', (req, res) => {
     const foundUser = findById(req.body.id);
-    !!foundUser ? res.json(foundUser.entries++) : res.status(400).send('User not found');
+    !!foundUser ? res.json(++foundUser.entries) : res.status(400).send('User not found');
 
 })
 
