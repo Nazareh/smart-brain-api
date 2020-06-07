@@ -6,14 +6,12 @@ const knex = require('knex');
 const db = knex({
     client: 'pg',
     connection: {
-        host: '127.0.0.1:5432',
-        user: 'postgres',
-        password: 'mysecretpassword',
-        database: 'postgres'
+        host: '127.0.0.1',
+        user: 'admin',
+        password: 'supersecret',
+        database: 'smart-brain-db'
     }
 });
-
-// db.select('*').from('users');
 
 const app = express();
 const {dbInstance, findById, findByEmail} = require('./database.js')
@@ -41,16 +39,13 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
     bcrypt.hash(password, 10, function (err, hash) {
-        dbInstance.users.push(
-            {
-                id: '125',
+        db('users').insert({
                 name: name,
                 email: email,
-                password: hash,
-                entries: 0,
                 joined: new Date()
             }
-        );
+        ).then(console.log)
+            .catch(console.log);
         res.json(dbInstance.users[dbInstance.users.length - 1])
     });
 
