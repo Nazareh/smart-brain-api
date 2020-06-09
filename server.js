@@ -39,14 +39,15 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
     bcrypt.hash(password, 10, function (err, hash) {
-        db('users').insert({
-                name: name,
-                email: email,
-                joined: new Date()
-            }
-        ).then(console.log)
-            .catch(console.log);
-        res.json(dbInstance.users[dbInstance.users.length - 1])
+        db('users')
+            .returning('*')
+            .insert({
+                    name: name,
+                    email: email,
+                    joined: new Date()
+                }
+            ).then(user => res.json(user))
+            .catch(err => res.status(400).json(err));
     });
 
 
