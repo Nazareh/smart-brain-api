@@ -54,9 +54,18 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/profile/:id', (req, res) => {
-    const foundUser = findById(req.params.id);
-    !!foundUser ? res.json(foundUser) : res.status(400).send('User not found');
-})
+    const {id} = req.params
+    db.select('*')
+        .from('users')
+        .where({id})
+        .then(users => {
+            if (users.length) {
+                res.json(users[0])
+            } else {
+                res.status(400).send('User not found')
+            }
+        })
+});
 
 app.put('/image', (req, res) => {
     const foundUser = findById(req.body.id);
