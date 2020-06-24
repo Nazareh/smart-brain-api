@@ -68,9 +68,12 @@ app.get('/profile/:id', (req, res) => {
 });
 
 app.put('/image', (req, res) => {
-    const foundUser = findById(req.body.id);
-    !!foundUser ? res.json(++foundUser.entries) : res.status(400).send('User not found');
-
+    db('users')
+        .where('id', '=', req.body.id)
+        .increment('entries', 1)
+        .returning('entries')
+        .then(entries => res.json(entries[0]))
+        .catch(err => res.status(400).json('unable to get entries'))
 })
 
 app.listen(3002, () => {
