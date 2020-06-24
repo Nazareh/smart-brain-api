@@ -14,13 +14,14 @@ const db = knex({
 });
 
 const app = express();
-const {dbInstance, findById, findByEmail} = require('./database.js')
 
 app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send(dbInstance.users);
+    db.select('*')
+        .from('users')
+        .then(users => res.send(users))
 })
 
 app.post('/signin', (req, res) => {
